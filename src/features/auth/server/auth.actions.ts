@@ -3,7 +3,7 @@
 import { apiClient } from "@/services/apiClient";
 import { AxiosRequestConfig } from "axios";
 import { cookies } from "next/headers";
-import type { InitalState } from "@/features/auth/slices/auth.slice";
+import type { InitialState } from "@/features/auth/slices/auth.slice";
 
 export async function setToken(token: string): Promise<void> {
   const cookieStore = await cookies();
@@ -29,7 +29,7 @@ export async function deleteToken(): Promise<void> {
   cookieStore.delete("token");
 }
 
-export async function verifyToken(): Promise<InitalState> {
+export async function verifyToken(): Promise<InitialState> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
 

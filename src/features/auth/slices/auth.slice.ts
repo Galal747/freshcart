@@ -7,15 +7,15 @@ export type User = {
   role: string;
 };
 
-export type InitalState = { isAuthenticated: boolean; userInfo: null | User };
+export type InitialState = { isAuthenticated: boolean; userInfo: null | User };
 
-const initialState: InitalState = { isAuthenticated: false, userInfo: null };
+const initialState: InitialState = { isAuthenticated: false, userInfo: null };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuthStates: function (state, action: PayloadAction<InitalState>) {
+    setAuthStates: function (state, action: PayloadAction<InitialState>) {
       state.isAuthenticated = action.payload.isAuthenticated;
       state.userInfo = action.payload.userInfo;
     },
