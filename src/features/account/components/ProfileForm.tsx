@@ -157,7 +157,6 @@ export default function ProfileForm({ userId, role }: Props) {
         </button>
       </form>
 
-      {/* Account information */}
       <div className="border-t border-gray-100 bg-gray-50 px-6 py-6 sm:px-9">
         <h4 className="mb-4 font-bold text-gray-900">Account Information</h4>
         <dl className="space-y-3 text-sm">
