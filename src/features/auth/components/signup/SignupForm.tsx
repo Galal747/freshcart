@@ -1,15 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconUserPlus } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconUserPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { signupSchema, SignupValues } from "../../schemas/signup.schema";
 import { signupAction } from "../../server/signup.actions";
-
 
 const FORM_FIELDS: readonly (keyof SignupValues)[] = [
   "name",
@@ -39,7 +38,6 @@ function isAlreadyExistsMessage(message?: string) {
 function isPhoneMessage(message?: string) {
   return /phone|mobile/i.test(message ?? "");
 }
-
 
 function ErrorMessage({
   message,
@@ -75,6 +73,24 @@ function ErrorMessage({
   );
 }
 
+function EyeToggle({
+  visible,
+  onToggle,
+}: {
+  visible: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={visible ? "Hide password" : "Show password"}
+      onClick={onToggle}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+    >
+      {visible ? <IconEyeOff stroke={2} /> : <IconEye stroke={2} />}
+    </button>
+  );
+}
 
 function getPasswordStrength(password: string) {
   const checks = [
@@ -95,9 +111,10 @@ function getPasswordStrength(password: string) {
   return { percent: 100, label: "Strong", color: "bg-green-500" };
 }
 
-
 export default function SignupForm() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRePassword, setShowRePassword] = useState(false);
 
   const {
     register,
@@ -263,15 +280,21 @@ export default function SignupForm() {
 
           <div className="flex bg-light flex-col gap-2">
             <label htmlFor="password">Password*</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="create a strong password"
-              autoComplete="new-password"
-              id="password"
-              aria-invalid={!!errors.password}
-              {...register("password", { onChange: handlePasswordChange })}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control pe-12"
+                placeholder="create a strong password"
+                autoComplete="new-password"
+                id="password"
+                aria-invalid={!!errors.password}
+                {...register("password", { onChange: handlePasswordChange })}
+              />
+              <EyeToggle
+                visible={showPassword}
+                onToggle={() => setShowPassword((visible) => !visible)}
+              />
+            </div>
 
             <div className="password-requirements">
               <div className="flex items-center gap-2">
@@ -290,15 +313,21 @@ export default function SignupForm() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="rePassword">Confirm Password*</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="confirm your password"
-              autoComplete="new-password"
-              id="rePassword"
-              aria-invalid={!!errors.rePassword}
-              {...register("rePassword")}
-            />
+            <div className="relative">
+              <input
+                type={showRePassword ? "text" : "password"}
+                className="form-control pe-12"
+                placeholder="confirm your password"
+                autoComplete="new-password"
+                id="rePassword"
+                aria-invalid={!!errors.rePassword}
+                {...register("rePassword")}
+              />
+              <EyeToggle
+                visible={showRePassword}
+                onToggle={() => setShowRePassword((visible) => !visible)}
+              />
+            </div>
             <ErrorMessage message={errors.rePassword?.message} />
           </div>
 
@@ -327,11 +356,11 @@ export default function SignupForm() {
               />
               <label htmlFor="terms" className="ms-2 text-sm sm:text-base">
                 I agree to the{" "}
-                <Link href={`/terms`} className="text-primary-600">
+                <Link href="/terms-of-service" className="text-primary-600">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href={`/privacy-policy`} className="text-primary-600">
+                <Link href="/privacy-policy" className="text-primary-600">
                   Privacy Policy
                 </Link>{" "}
                 *
@@ -382,7 +411,7 @@ export default function SignupForm() {
 
         <p className="border-t pt-6 sm:pt-10 border-gray-300/30 mt-6 mb-2 text-center">
           Already have an account?{" "}
-          <Link href={`/login`} className="text-primary-600">
+          <Link href="/login" className="text-primary-600">
             Sign In
           </Link>
         </p>

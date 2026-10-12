@@ -42,27 +42,27 @@ type NavItem = { href: string; label: string; icon: Icon };
 
 const categories: NavItem[] = [
   {
-    href: "/category/6439d5b90049ad0b52b90048",
+    href: "/categories/6439d5b90049ad0b52b90048",
     label: "Men's Fashion",
     icon: IconUser,
   },
   {
-    href: "/category/6439d58a0049ad0b52b9003f",
+    href: "/categories/6439d58a0049ad0b52b9003f",
     label: "Women's Fashion",
     icon: IconShirtSport,
   },
   {
-    href: "/category/6439d40367d9aa4ca97064cc",
+    href: "/categories/6439d40367d9aa4ca97064cc",
     label: "Baby & Toys",
     icon: IconBabyCarriage,
   },
   {
-    href: "/category/6439d30b67d9aa4ca97064b1",
+    href: "/categories/6439d30b67d9aa4ca97064b1",
     label: "Beauty & Health",
     icon: IconReportMedical,
   },
   {
-    href: "/category/6439d2d167d9aa4ca970649f",
+    href: "/categories/6439d2d167d9aa4ca970649f",
     label: "Electronics",
     icon: IconProgressBolt,
   },
@@ -72,13 +72,11 @@ const categories: NavItem[] = [
     icon: IconDotsVertical,
   },
 ];
-
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/brands", label: "Brands" },
 ];
-
 const accountLinks: NavItem[] = [
   { href: "/profile", label: "My Profile", icon: IconUser },
   { href: "/orders", label: "My Orders", icon: IconPackage },
@@ -91,18 +89,16 @@ export default function Navbar() {
   const { isAuthenticated, userInfo } = useSelector(
     (state: AppState) => state.authReducer,
   );
-
-  const user = userInfo as unknown as { name?: string; email?: string } | null;
-  const userName = user?.name || "My Account";
-  const userEmail = user?.email || "";
+  const userName = userInfo?.name || "My Account";
+  const userEmail = userInfo?.email || "";
 
   const { logout } = authAction;
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // mobile drawer
+  const [userMenuOpen, setUserMenuOpen] = useState(false); // desktop dropdown
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const closeMenu = () => setIsOpen(false);
@@ -112,9 +108,9 @@ export default function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const desktopLinkCls = (href: string) =>
-    `transition-colors duration-200 ${isActive(href) ? "text-primary-600" : "hover:text-primary-600"
+    `transition-colors duration-200 ${
+      isActive(href) ? "text-primary-600" : "hover:text-primary-600"
     }`;
-
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
 
@@ -134,7 +130,6 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
-
   useEffect(() => {
     if (!userMenuOpen) return;
 
@@ -341,8 +336,9 @@ export default function Navbar() {
             <Link
               href="/wishlist"
               aria-label="Wishlist"
-              className={`size-10 flex items-center justify-center transition-colors hover:text-primary-600 ${isActive("/wishlist") ? "text-primary-600" : "text-gray-700"
-                }`}
+              className={`size-10 flex items-center justify-center transition-colors hover:text-primary-600 ${
+                isActive("/wishlist") ? "text-primary-600" : "text-gray-700"
+              }`}
             >
               <IconHeart stroke={2} />
             </Link>
@@ -350,8 +346,9 @@ export default function Navbar() {
             <Link
               href="/cart"
               aria-label="Cart"
-              className={`size-10 flex items-center justify-center transition-colors hover:text-primary-600 ${isActive("/cart") ? "text-primary-600" : "text-gray-700"
-                }`}
+              className={`size-10 flex items-center justify-center transition-colors hover:text-primary-600 ${
+                isActive("/cart") ? "text-primary-600" : "text-gray-700"
+              }`}
             >
               <div className="relative">
                 <IconShoppingCart stroke={2} />
@@ -367,8 +364,9 @@ export default function Navbar() {
                   aria-haspopup="menu"
                   aria-expanded={userMenuOpen}
                   onClick={() => setUserMenuOpen((open) => !open)}
-                  className={`size-10 flex items-center justify-center rounded-full text-primary-600 transition-colors cursor-pointer ${userMenuOpen ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
-                    }`}
+                  className={`size-10 flex items-center justify-center rounded-full text-primary-600 transition-colors cursor-pointer ${
+                    userMenuOpen ? "bg-gray-200" : "bg-gray-100 hover:bg-gray-200"
+                  }`}
                 >
                   <IconUserCircle stroke={2} size={24} />
                 </button>
@@ -378,7 +376,6 @@ export default function Navbar() {
                     role="menu"
                     className="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl"
                   >
-                    {/* User header */}
                     <div className="flex items-center gap-3 border-b border-gray-100 p-4">
                       <span className="size-11 shrink-0 flex items-center justify-center rounded-full bg-primary-100 text-primary-600">
                         <IconUserCircle stroke={2} size={26} />
@@ -425,17 +422,34 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 rounded-full bg-primary-600 px-5 py-2.5 font-semibold text-white hover:bg-primary-700 transition-colors"
-              >
-                <IconUser stroke={2} size={18} />
-                Sign In
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="rounded-full border border-primary-600 px-5 py-2.5 font-semibold text-primary-600 hover:bg-primary-50 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className="flex items-center gap-2 rounded-full bg-primary-600 px-5 py-2.5 font-semibold text-white hover:bg-primary-700 transition-colors"
+                >
+                  <IconUserPlus stroke={2} size={18} />
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
 
           <div className="flex items-center gap-3 lg:hidden">
+            {!isAuthenticated && (
+              <Link
+                href="/login"
+                aria-label="Sign in"
+                className="size-10 flex justify-center items-center hover:text-primary-600 transition-colors"
+              >
+                <IconUser stroke={2} />
+              </Link>
+            )}
             <Link
               href="/cart"
               aria-label="Cart"
@@ -464,15 +478,17 @@ export default function Navbar() {
       <div
         onClick={closeMenu}
         aria-hidden="true"
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 lg:hidden ${isOpen ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 lg:hidden ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
       />
 
       <aside
         id="mobile-menu"
         inert={!isOpen}
-        className={`fixed top-0 right-0 z-50 flex h-dvh w-80 max-w-[85%] flex-col bg-white shadow-xl transition-transform duration-300 lg:hidden ${isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`fixed top-0 right-0 z-50 flex h-dvh w-80 max-w-[85%] flex-col bg-white shadow-xl transition-transform duration-300 lg:hidden ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <div className="flex items-center justify-between border-b border-gray-100 p-4">
           <Link href="/" onClick={closeMenu}>
@@ -534,10 +550,11 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={closeMenu}
-                    className={`block rounded-lg px-3 py-2.5 font-medium transition-colors hover:bg-gray-100 hover:text-primary-600 ${isActive(link.href)
+                    className={`block rounded-lg px-3 py-2.5 font-medium transition-colors hover:bg-gray-100 hover:text-primary-600 ${
+                      isActive(link.href)
                         ? "bg-primary-50 text-primary-600"
                         : ""
-                      }`}
+                    }`}
                   >
                     {link.label}
                   </Link>
@@ -547,8 +564,9 @@ export default function Navbar() {
                 <Link
                   href="/wishlist"
                   onClick={closeMenu}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition-colors hover:bg-gray-100 hover:text-primary-600 ${isActive("/wishlist") ? "bg-primary-50 text-primary-600" : ""
-                    }`}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium transition-colors hover:bg-gray-100 hover:text-primary-600 ${
+                    isActive("/wishlist") ? "bg-primary-50 text-primary-600" : ""
+                  }`}
                 >
                   <IconHeart stroke={2} size={20} />
                   Wishlist

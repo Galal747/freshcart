@@ -5,15 +5,18 @@ import { AxiosRequestConfig } from "axios";
 import { cookies } from "next/headers";
 import type { InitialState } from "@/features/auth/slices/auth.slice";
 
-export async function setToken(token: string): Promise<void> {
+const cookieOptions = {
+  maxAge: 60 * 60 * 24 * 7,
+  httpOnly: true,
+  path: "/",
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+};
+
+export async function setToken(token: string, email?: string): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set("token", token, {
-    maxAge: 60 * 60 * 24 * 7,
-    httpOnly: true,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  cookieStore.set("token", token, cookieOptions);
+  if (email) cookieStore.set("email", email, cookieOptions);
 }
 
 export async function getToken(): Promise<string | null> {
@@ -27,6 +30,7 @@ export async function getToken(): Promise<string | null> {
 export async function deleteToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("token");
+  cookieStore.delete("email");
 }
 
 export async function verifyToken(): Promise<InitialState> {
@@ -57,6 +61,7 @@ export async function verifyToken(): Promise<InitialState> {
           id: data.decoded.id,
           name: data.decoded.name,
           role: data.decoded.role,
+          email: cookieStore.get("email")?.value,
         },
       };
     }

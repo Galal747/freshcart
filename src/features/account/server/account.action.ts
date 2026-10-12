@@ -9,22 +9,17 @@ import type { PasswordValues } from "../schemas/password.schema";
 
 const API = "https://ecommerce.routemisr.com/api/v1";
 
-const TOKEN_COOKIE = "token";
+const cookieOptions = {
+  maxAge: 60 * 60 * 24 * 7,
+  httpOnly: true,
+  path: "/",
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+};
 
 async function getToken() {
   const store = await cookies();
-  return store.get(TOKEN_COOKIE)?.value;
-}
-
-async function setToken(token: string) {
-  const store = await cookies();
-  store.set(TOKEN_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
+  return store.get("token")?.value;
 }
 
 function errorMessage(error: unknown) {
@@ -100,6 +95,12 @@ export async function updateProfile(values: {
     const { data } = await axios.put(`${API}/users/updateMe/`, values, {
       headers: { token },
     });
+
+    if (data.user?.email) {
+      const store = await cookies();
+      store.set("email", data.user.email, cookieOptions);
+    }
+
     return { success: true, data: data.user };
   } catch (error) {
     return { success: false, message: errorMessage(error) };
@@ -116,13 +117,17 @@ export async function changePassword(
     const { data } = await axios.put(`${API}/users/changeMyPassword`, values, {
       headers: { token },
     });
-    if (data.token) await setToken(data.token);
+
+    if (data.token) {
+      const store = await cookies();
+      store.set("token", data.token, cookieOptions);
+    }
+
     return { success: true, data: null };
   } catch (error) {
     return { success: false, message: errorMessage(error) };
   }
 }
-
 
 export async function forgotPassword(email: string): Promise<ActionResult> {
   try {

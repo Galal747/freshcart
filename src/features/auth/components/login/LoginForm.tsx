@@ -2,15 +2,18 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  IconAlertCircle,
   IconBrandFacebook,
   IconBrandGoogleFilled,
   IconEye,
+  IconEyeOff,
   IconLockFilled,
   IconMail,
   IconStarFilled,
   IconUsers,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { loginSchema, LoginValues } from "../../schemas/login.schema";
@@ -20,55 +23,66 @@ import { setToken } from "../../server/auth.actions";
 import { authAction } from "../../slices/auth.slice";
 import { toast } from "sonner";
 
+const NETWORK_ERROR_MESSAGE =
+  "We couldn't reach the server. Please check your connection and try again.";
+
 export default function LoginForm() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    clearErrors,
+    formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     defaultValues: {
       email: "",
       password: "",
     },
-
     resolver: zodResolver(loginSchema),
   });
 
   const handleLogin: SubmitHandler<LoginValues> = async function (values) {
-    const response = await loginAction(values);
+    clearErrors("root");
 
-    if (response.success) {
-      await setToken(response.data.token);
+    try {
+      const response = await loginAction(values);
 
-      dispatch(
-        authAction.setAuthStates({
-          isAuthenticated: true,
-          userInfo: response.data.user,
-        }),
-      );
+      if (response.success) {
+        await setToken(response.data.token, response.data.user.email);
 
-      toast.success(response.message);
-      router.push("/");
-    }
+        dispatch(
+          authAction.setAuthStates({
+            isAuthenticated: true,
+            userInfo: response.data.user,
+          }),
+        );
 
-    if (!response.success) {
+        toast.success(response.message);
+        router.push("/");
+        return;
+      }
+
       if (response.fieldErrors) {
-        for (const [key, messages] of Object.entries(response.fieldErrors))
+        for (const [key, messages] of Object.entries(response.fieldErrors)) {
           setError(key as keyof LoginValues, { message: messages?.[0] });
+        }
       }
 
       setError("root", { message: response.message });
+      toast.error(response.message);
+    } catch {
+      setError("root", { message: NETWORK_ERROR_MESSAGE });
+      toast.error(NETWORK_ERROR_MESSAGE);
     }
   };
 
   return (
     <div className="w-full">
       <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-12">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <span className="text-3xl font-bold text-primary-600">
@@ -117,7 +131,21 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit(handleLogin)}>
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(handleLogin)}
+          noValidate
+        >
+          {errors.root?.message && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              <IconAlertCircle size={18} className="mt-0.5 shrink-0" />
+              <p className="font-medium">{errors.root.message}</p>
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="email"
@@ -128,7 +156,10 @@ export default function LoginForm() {
             <div className="relative">
               <input
                 type="email"
-                className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+                autoComplete="email"
+                className={`w-full px-4 py-3 pl-12 border-2 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all ${
+                  errors.email ? "border-red-300" : "border-gray-200"
+                }`}
                 placeholder="Enter your email"
                 id="email"
                 {...register("email")}
@@ -140,7 +171,7 @@ export default function LoginForm() {
             </div>
 
             {errors.email && (
-              <div className="bg-red-100 text-red-800 px-3 py-1 rounded-md">
+              <div className="mt-2 bg-red-100 text-red-800 px-3 py-1 rounded-md">
                 <p>*{errors.email.message}</p>
               </div>
             )}
@@ -155,7 +186,7 @@ export default function LoginForm() {
                 Password
               </label>
               <Link
-                href="/forget-password"
+                href="/forgot-password"
                 className="text-sm text-primary-600 hover:text-primary-700 cursor-pointer font-medium"
               >
                 Forgot Password?
@@ -163,9 +194,12 @@ export default function LoginForm() {
             </div>
             <div className="relative">
               <input
-                type={"password"}
+                type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full px-4 py-3 pl-12 pr-12 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+                autoComplete="current-password"
+                className={`w-full px-4 py-3 pl-12 pr-12 border-2 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all ${
+                  errors.password ? "border-red-300" : "border-gray-200"
+                }`}
                 placeholder="Enter your password"
                 {...register("password")}
               />
@@ -173,14 +207,20 @@ export default function LoginForm() {
 
               <button
                 type="button"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((visible) => !visible)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
-                <IconEye stroke={2} />
+                {showPassword ? (
+                  <IconEyeOff stroke={2} />
+                ) : (
+                  <IconEye stroke={2} />
+                )}
               </button>
             </div>
 
             {errors.password && (
-              <div className="bg-red-100 text-red-800 px-3 py-1 rounded-md">
+              <div className="mt-2 bg-red-100 text-red-800 px-3 py-1 rounded-md">
                 <p>*{errors.password.message}</p>
               </div>
             )}
@@ -200,9 +240,10 @@ export default function LoginForm() {
 
           <button
             type="submit"
-            className="w-full bg-primary-600 text-white py-3 px-4 rounded-xl hover:bg-primary-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isSubmitting}
+            className="w-full bg-primary-600 text-white py-3 px-4 rounded-xl hover:bg-primary-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign In
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
 

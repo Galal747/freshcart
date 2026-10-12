@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { IconDeviceFloppy, IconUser } from "@tabler/icons-react";
 import { AppState } from "@/store/store";
+import { authAction } from "@/features/auth/slices/auth.slice";
 import { updateProfile } from "../server/account.action";
 import { profileSchema } from "../schemas/profile.schema";
 
@@ -17,16 +18,16 @@ const inputCls =
   "h-14 w-full rounded-xl border bg-white px-4 outline-none transition-colors placeholder:text-gray-400 focus:border-primary-600";
 
 export default function ProfileForm({ userId, role }: Props) {
-  const { userInfo } = useSelector((state: AppState) => state.authReducer);
-  // لو شكل userInfo عندك مختلف عدّل السطر ده
-  const user = userInfo as unknown as { name?: string; email?: string } | null;
+  const { isAuthenticated, userInfo } = useSelector(
+    (state: AppState) => state.authReducer,
+  );
+  const dispatch = useDispatch();
+  const user = userInfo;
 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [edits, setEdits] = useState<Edits>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // القيمة المعروضة: اللي اليوزر كتبه، وإلا الداتا الحالية
   const name = edits.name ?? user?.name ?? "";
   const email = edits.email ?? user?.email ?? "";
   const phone = edits.phone ?? "";
@@ -49,8 +50,6 @@ export default function ProfileForm({ userId, role }: Props) {
       return;
     }
     setErrors({});
-
-    // ابعت الحقول اللي اتغيرت بس (الـ API بيرفض الإيميل لو هو نفسه)
     const changes: Edits = {};
     if (parsed.data.name && parsed.data.name !== (user?.name ?? ""))
       changes.name = parsed.data.name;
@@ -69,6 +68,17 @@ export default function ProfileForm({ userId, role }: Props) {
         toast.error(res.message);
         return;
       }
+      dispatch(
+        authAction.setAuthStates({
+          isAuthenticated,
+          userInfo: {
+            id: user?.id ?? userId,
+            role: user?.role ?? role ?? "user",
+            name: res.data.name ?? user?.name ?? "",
+            email: res.data.email ?? user?.email,
+          },
+        }),
+      );
       toast.success("Profile updated successfully");
       router.refresh();
     });

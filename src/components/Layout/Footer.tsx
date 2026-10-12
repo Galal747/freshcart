@@ -9,14 +9,81 @@ import {
   IconBrandTwitter,
 } from "@tabler/icons-react";
 
+type FooterLink = { label: string; href?: string };
+
+const linkCls = "text-gray-600 hover:text-primary-600 transition-colors";
+
+// نفس الـ ids المستخدمة في الـ Navbar
+const categories: FooterLink[] = [
+  { label: "Men's Fashion", href: "/category/6439d5b90049ad0b52b90048" },
+  { label: "Women's Fashion", href: "/category/6439d58a0049ad0b52b9003f" },
+  { label: "Baby & Toys", href: "/category/6439d40367d9aa4ca97064cc" },
+  { label: "Beauty & Health", href: "/category/6439d30b67d9aa4ca97064b1" },
+  { label: "Electronics", href: "/category/6439d2d167d9aa4ca970649f" },
+];
+
+// من غير href = لسه مفيش صفحة ليها (بتظهر كنص عادي)
+const quickLinks: FooterLink[] = [
+  { label: "About Us" },
+  { label: "Contact Us", href: "mailto:support@freshcart.com" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  {
+    label: "Shipping Policy",
+    href: "/terms-of-service#shipping-and-delivery",
+  },
+];
+
+const customerService: FooterLink[] = [
+  { label: "My Account", href: "/profile" },
+  { label: "My Orders", href: "/orders" },
+  { label: "Wishlist", href: "/wishlist" },
+  { label: "Returns & Refunds", href: "/return-policy" },
+  { label: "Help Center", href: "mailto:support@freshcart.com" },
+];
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: FooterLink[];
+}) {
+  return (
+    <div>
+      <h3 className="font-bold text-lg mb-3 md:mb-4">{title}</h3>
+      <ul className="space-y-3">
+        {links.map(({ label, href }) => (
+          <li key={label}>
+            {!href ? (
+              <span className="text-gray-600">{label}</span>
+            ) : href.startsWith("mailto:") ? (
+              <a href={href} className={linkCls}>
+                {label}
+              </a>
+            ) : (
+              <Link href={href} className={linkCls}>
+                {label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <>
-      <footer id="footer" className="bg-white border-t border-gray-200 pt-8 md:pt-10">
+      <footer
+        id="footer"
+        className="bg-white border-t border-gray-200 pt-8 md:pt-10"
+      >
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
             <div className="sm:col-span-2 lg:col-span-2">
-              <Link href={`/`} className="mb-6">
+              <Link href="/" className="mb-6 inline-block">
                 <Image
                   src={lightLogo}
                   alt="FreshCart Logo"
@@ -31,132 +98,56 @@ export default function Footer() {
                 categories.
               </p>
               <div className="flex flex-wrap gap-4">
-                <span className="text-gray-500 hover:text-primary-600 cursor-pointer">
+                <span
+                  aria-label="Facebook"
+                  className="text-gray-500 hover:text-primary-600 cursor-pointer"
+                >
                   <IconBrandFacebook stroke={2} />
                 </span>
-                <span className="text-gray-500 hover:text-primary-600 cursor-pointer">
+                <span
+                  aria-label="Twitter"
+                  className="text-gray-500 hover:text-primary-600 cursor-pointer"
+                >
                   <IconBrandTwitter stroke={2} />
                 </span>
-                <span className="text-gray-500 hover:text-primary-600 cursor-pointer">
+                <span
+                  aria-label="Instagram"
+                  className="text-gray-500 hover:text-primary-600 cursor-pointer"
+                >
                   <IconBrandInstagram stroke={2} />
                 </span>
-                <span className="text-gray-500 hover:text-primary-600 cursor-pointer">
+                <span
+                  aria-label="Pinterest"
+                  className="text-gray-500 hover:text-primary-600 cursor-pointer"
+                >
                   <IconBrandPinterest stroke={2} />
                 </span>
               </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg mb-3 md:mb-4">Categories</h3>
-              <ul className="space-y-3">
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Men's Fashion
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Women's Fashion
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Baby &amp; Toys
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Beauty &amp; Health
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Electronics
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-3 md:mb-4">Quick Links</h3>
-              <ul className="space-y-3">
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    About Us
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Contact Us
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Privacy Policy
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Terms of Service
-                  </span>
-                </li>
-                <li>
-                  <span className="text-gray-600 hover:text-primary-600 cursor-pointer">
-                    Shipping Policy
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-3 md:mb-4">Customer Service</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link
-                    href="/account"
-                    className="text-gray-600 hover:text-primary-600 cursor-pointer"
-                  >
-                    My Account
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/orders"
-                    className="text-gray-600 hover:text-primary-600 cursor-pointer"
-                  >
-                    My Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/wishlist"
-                    className="text-gray-600 hover:text-primary-600 cursor-pointer"
-                  >
-                    Wishlist
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/returns"
-                    className="text-gray-600 hover:text-primary-600 cursor-pointer"
-                  >
-                    Returns &amp; Refunds
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/help"
-                    className="text-gray-600 hover:text-primary-600 cursor-pointer"
-                  >
-                    Help Center
-                  </Link>
-                </li>
-              </ul>
-            </div>
+
+            <FooterColumn title="Categories" links={categories} />
+            <FooterColumn title="Quick Links" links={quickLinks} />
+            <FooterColumn title="Customer Service" links={customerService} />
           </div>
+
           <div className="border-t border-gray-200 mt-8 md:mt-10 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-start">
               <p className="text-gray-600">
                 © {new Date().getFullYear()} FreshCart. All rights reserved.
               </p>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  Privacy
+                </Link>
+                <Link
+                  href="/terms-of-service"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  Terms
+                </Link>
                 <Image
                   src={miniLogo}
                   alt="FreshCart Mini Logo"
