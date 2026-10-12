@@ -1,5 +1,5 @@
 
-   import type { LegalSection } from "../components/LegalLayout";
+import type { LegalSection } from "../components/LegalLayout";
 export const termsSections: LegalSection[] = [
   {
     id: "acceptance",
