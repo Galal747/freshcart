@@ -9,13 +9,14 @@ import { AppState } from "@/store/store";
 import { authAction } from "@/features/auth/slices/auth.slice";
 import { updateProfile } from "../server/account.action";
 import { profileSchema } from "../schemas/profile.schema";
+import Reveal from "@/components/Animations/Reveal";
 
 type Props = { userId?: string; role?: string };
 
 type Edits = { name?: string; email?: string; phone?: string };
 
 const inputCls =
-  "h-14 w-full rounded-xl border bg-white px-4 outline-none transition-colors placeholder:text-gray-400 focus:border-primary-600";
+  "h-12 w-full rounded-xl border bg-white px-4 outline-none sm:h-14 transition-colors placeholder:text-gray-400 focus:border-primary-600";
 
 export default function ProfileForm({ userId, role }: Props) {
   const { isAuthenticated, userInfo } = useSelector(
@@ -88,8 +89,9 @@ export default function ProfileForm({ userId, role }: Props) {
     errors[field] ? "border-red-400" : "border-gray-200";
 
   return (
+    <Reveal>
     <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <form onSubmit={handleSubmit} className="space-y-5 p-6 sm:p-9" noValidate>
+      <form onSubmit={handleSubmit} className="space-y-4 p-5 sm:space-y-5 sm:p-9" noValidate>
         <div className="flex items-center gap-4">
           <span className="flex size-14 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
             <IconUser size={26} />
@@ -150,14 +152,14 @@ export default function ProfileForm({ userId, role }: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="flex cursor-pointer items-center gap-2 rounded-xl bg-linear-to-r from-primary-600 to-primary-700 px-6 py-3.5 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-linear-to-r sm:w-auto from-primary-600 to-primary-700 px-6 py-3.5 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <IconDeviceFloppy size={18} />
           {isPending ? "Saving..." : "Save Changes"}
         </button>
       </form>
 
-      <div className="border-t border-gray-100 bg-gray-50 px-6 py-6 sm:px-9">
+      <div className="border-t border-gray-100 bg-gray-50 px-5 py-5 sm:px-9 sm:py-6">
         <h4 className="mb-4 font-bold text-gray-900">Account Information</h4>
         <dl className="space-y-3 text-sm">
           <div className="flex items-center justify-between gap-4">
@@ -175,5 +177,6 @@ export default function ProfileForm({ userId, role }: Props) {
         </dl>
       </div>
     </section>
+    </Reveal>
   );
 }

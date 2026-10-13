@@ -8,6 +8,7 @@ import {
   IconShoppingCart,
   IconUser,
 } from "@tabler/icons-react";
+import Reveal from "@/components/Animations/Reveal";
 
 export const metadata = { title: "Page not found | FreshCart" };
 
@@ -20,8 +21,8 @@ const quickLinks = [
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-4 py-16">
-      <div className="w-full max-w-xl text-center">
+    <main className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-4 py-10 sm:py-16">
+      <Reveal className="w-full max-w-xl text-center">
         <span className="mx-auto flex size-20 items-center justify-center rounded-full bg-primary-50 text-primary-600 ring-8 ring-primary-50/60">
           <IconCompass size={38} />
         </span>
@@ -71,7 +72,7 @@ export default function NotFound() {
             ))}
           </ul>
         </div>
-      </div>
+      </Reveal>
     </main>
   );
 }

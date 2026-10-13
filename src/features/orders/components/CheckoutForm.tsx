@@ -27,6 +27,7 @@ import {
   type ShippingFormValues,
 } from "../schemas/shipping.schema";
 import { calcTotals, formatEGP } from "@/features/cart/utils/pricing";
+import Reveal from "@/components/Animations/Reveal";
 
 type PaymentMethod = "cash" | "card";
 
@@ -54,7 +55,7 @@ function CardHeader({
   subtitle: string;
 }) {
   return (
-    <div className="bg-linear-to-r from-primary-600 to-primary-700 px-6 py-5 text-white">
+    <div className="bg-linear-to-r from-primary-600 to-primary-700 px-4 py-4 text-white sm:px-6 sm:py-5">
       <h2 className="flex items-center gap-2 text-lg font-bold">
         <HeaderIcon size={20} />
         {title}
@@ -121,20 +122,21 @@ export default function CheckoutForm({ cartId, products }: Props) {
     errors[field] ? "border-red-400" : "border-gray-200";
 
   return (
-    <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3 lg:gap-8">
       <form
         id="checkout-form"
         onSubmit={handleSubmit}
-        className="space-y-6 lg:col-span-2"
+        className="space-y-4 lg:col-span-2 lg:space-y-6"
       >
-        <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <Reveal from="left">
+<section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           <CardHeader
             icon={IconHome}
             title="Shipping Address"
             subtitle="Where should we deliver your order?"
           />
 
-          <div className="space-y-6 p-6">
+          <div className="space-y-5 p-4 sm:space-y-6 sm:p-6">
             <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
                 <IconInfoCircle size={18} />
@@ -161,7 +163,7 @@ export default function CheckoutForm({ cartId, products }: Props) {
                   value={values.city}
                   onChange={handleChange("city")}
                   placeholder="e.g. Cairo, Alexandria, Giza"
-                  className={`${inputBase} h-14 ${borderFor("city")}`}
+                  className={`${inputBase} h-12 sm:h-14 ${borderFor("city")}`}
                 />
               </div>
               {errors.city && (
@@ -203,7 +205,7 @@ export default function CheckoutForm({ cartId, products }: Props) {
                   onChange={handleChange("phone")}
                   placeholder="01xxxxxxxxx"
                   inputMode="tel"
-                  className={`${inputBase} h-14 pe-40 ${borderFor("phone")}`}
+                  className={`${inputBase} h-12 sm:h-14 pe-4 sm:pe-40 ${borderFor("phone")}`}
                 />
                 <span className="pointer-events-none absolute right-4 hidden text-xs text-gray-400 sm:block">
                   Egyptian numbers only
@@ -215,19 +217,21 @@ export default function CheckoutForm({ cartId, products }: Props) {
             </div>
           </div>
         </section>
+</Reveal>
 
-        <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <Reveal from="left" delay={0.1}>
+<section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           <CardHeader
             icon={IconCreditCard}
             title="Payment Method"
             subtitle="Choose how you'd like to pay"
           />
 
-          <div className="space-y-4 p-6">
+          <div className="space-y-3 p-4 sm:space-y-4 sm:p-6">
             <button
               type="button"
               onClick={() => setMethod("cash")}
-              className={`flex w-full cursor-pointer items-center gap-4 rounded-xl border-2 p-5 text-left transition-colors ${
+              className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-4 text-left sm:gap-4 sm:p-5 transition-colors ${
                 method === "cash"
                   ? "border-primary-600 bg-primary-50"
                   : "border-gray-200 hover:border-gray-300"
@@ -268,7 +272,7 @@ export default function CheckoutForm({ cartId, products }: Props) {
             <button
               type="button"
               onClick={() => setMethod("card")}
-              className={`flex w-full cursor-pointer items-center gap-4 rounded-xl border-2 p-5 text-left transition-colors ${
+              className={`flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-4 text-left sm:gap-4 sm:p-5 transition-colors ${
                 method === "card"
                   ? "border-primary-600 bg-primary-50"
                   : "border-gray-200 hover:border-gray-300"
@@ -332,17 +336,19 @@ export default function CheckoutForm({ cartId, products }: Props) {
             </div>
           </div>
         </section>
+</Reveal>
       </form>
 
-      <aside className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm lg:sticky lg:top-28">
+      <Reveal from="right" className="lg:sticky lg:top-28">
+<aside className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
         <CardHeader
           icon={IconShoppingBag}
           title="Order Summary"
           subtitle={`${itemsCount} ${itemsCount === 1 ? "item" : "items"}`}
         />
 
-        <div className="p-6">
-          <ul className="max-h-72 space-y-3 overflow-y-auto">
+        <div className="p-4 sm:p-6">
+          <ul className="max-h-56 sm:max-h-72 space-y-3 overflow-y-auto">
             {products.map((item) => (
               <li
                 key={item._id}
@@ -412,7 +418,7 @@ export default function CheckoutForm({ cartId, products }: Props) {
             type="submit"
             form="checkout-form"
             disabled={isPending}
-            className="mt-5 flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-linear-to-r from-primary-600 to-primary-700 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-5 hidden h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-xl lg:flex bg-linear-to-r from-primary-600 to-primary-700 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <IconShoppingBag size={20} />
             {isPending
@@ -440,6 +446,21 @@ export default function CheckoutForm({ cartId, products }: Props) {
           </div>
         </div>
       </aside>
+</Reveal>
+
+      <div className="sticky bottom-0 z-30 -mx-4 border-t border-gray-200 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_rgba(0,0,0,0.08)] backdrop-blur lg:hidden">
+        <button
+          type="submit"
+          form="checkout-form"
+          disabled={isPending}
+          className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-linear-to-r from-primary-600 to-primary-700 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <IconShoppingBag size={20} />
+          {isPending
+            ? "Processing..."
+            : `${method === "cash" ? "Place Order" : "Continue to Payment"} · ${formatEGP(total)} EGP`}
+        </button>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import Modal from "./Modal";
+import Reveal from "@/components/Animations/Reveal";
 import { addAddress, removeAddress } from "../server/account.action";
 import { addressSchema, type AddressValues } from "../schemas/address.schema";
 import type { Address } from "../types/account.types";
@@ -82,13 +83,13 @@ export default function AddressesManager({
   };
 
   const addButtonCls =
-    "flex cursor-pointer items-center gap-2 rounded-xl bg-linear-to-r from-primary-600 to-primary-700 px-5 py-3 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.98]";
+    "flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-linear-to-r from-primary-600 to-primary-700 px-5 py-3 font-semibold text-white shadow-lg shadow-primary-600/25 transition-all hover:-translate-y-0.5 active:scale-[0.98]";
 
   return (
     <section className={isPending ? "opacity-70" : ""}>
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <Reveal from="left" className="mb-5 flex flex-wrap items-start justify-between gap-3 sm:mb-6 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Addresses</h2>
+          <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">My Addresses</h2>
           <p className="mt-1 text-gray-500">
             Manage your saved delivery addresses
           </p>
@@ -96,15 +97,15 @@ export default function AddressesManager({
         <button
           type="button"
           onClick={() => setFormOpen(true)}
-          className={addButtonCls}
+          className={`${addButtonCls} w-full sm:w-auto`}
         >
           <IconPlus size={18} />
           Add Address
         </button>
-      </div>
+      </Reveal>
 
       {addresses.length === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center shadow-sm">
+        <Reveal className="flex flex-col items-center rounded-2xl border border-gray-100 bg-white px-4 py-10 text-center shadow-sm sm:px-6 sm:py-16">
           <span className="flex size-20 items-center justify-center rounded-full bg-gray-100 text-gray-400">
             <IconMapPin size={32} />
           </span>
@@ -122,14 +123,16 @@ export default function AddressesManager({
             <IconPlus size={18} />
             Add Your First Address
           </button>
-        </div>
+        </Reveal>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {addresses.map((address) => (
-            <article
+          {addresses.map((address, i) => (
+            <Reveal
               key={address._id}
-              className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+              delay={Math.min(i, 6) * 0.06}
+              className="h-full"
             >
+            <article className="flex h-full gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:gap-4 sm:p-5">
               <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
                 <IconMapPin size={20} />
               </span>
@@ -155,6 +158,7 @@ export default function AddressesManager({
                 <IconTrash size={18} />
               </button>
             </article>
+            </Reveal>
           ))}
         </div>
       )}

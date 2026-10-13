@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { IconArrowLeft, IconCheck, type Icon } from "@tabler/icons-react";
+import Reveal from "@/components/Animations/Reveal";
 
 const steps = ["Email", "Verify", "Reset"];
 
@@ -20,10 +21,10 @@ export default function AuthCard({
   children,
 }: AuthCardProps) {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-lg sm:p-8">
-        {/* Steps */}
-        <ol className="mb-8 flex items-center justify-center">
+    <div className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-4 py-8 sm:py-12">
+      <Reveal className="w-full max-w-md">
+      <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-8">
+        <ol className="mb-6 flex items-center justify-center sm:mb-8">
           {steps.map((label, i) => {
             const n = i + 1;
             const done = n < step;
@@ -78,6 +79,7 @@ export default function AuthCard({
           Back to Login
         </Link>
       </div>
+      </Reveal>
     </div>
   );
 }

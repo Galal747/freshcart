@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import Reveal from "@/components/Animations/Reveal";
 import { signupSchema, SignupValues } from "../../schemas/signup.schema";
 import { signupAction } from "../../server/signup.actions";
 
@@ -225,197 +226,199 @@ export default function SignupForm() {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg px-4 sm:px-6 py-8 sm:py-10">
-        <div className="mb-8 sm:mb-10">
-          <h2 className="text-center text-2xl sm:text-3xl font-semibold mb-2">
-            Create Your Account
-          </h2>
-          <p className="text-center">Start your fresh journey with us today</p>
-        </div>
-
-        <form
-          className="space-y-5 sm:space-y-7"
-          onSubmit={handleSubmit(handleRegister)}
-          noValidate
-        >
-          <div className="flex flex-col gap-2">
-            <label htmlFor="name">Name*</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Ali"
-              autoComplete="name"
-              id="name"
-              aria-invalid={!!errors.name}
-              {...register("name")}
-            />
-            <ErrorMessage message={errors.name?.message} />
+      <Reveal from="bottom">
+        <div className="bg-white rounded-2xl shadow-lg px-4 sm:px-6 py-6 sm:py-10">
+          <div className="mb-6 sm:mb-10">
+            <h2 className="text-center text-2xl sm:text-3xl font-semibold mb-2">
+              Create Your Account
+            </h2>
+            <p className="text-center">Start your fresh journey with us today</p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="email">Email*</label>
-            <input
-              type="email"
-              className="form-control"
-              placeholder="ali@example.com"
-              autoComplete="email"
-              id="email"
-              aria-invalid={!!errors.email}
-              {...register("email")}
-            />
-            <ErrorMessage message={errors.email?.message}>
-              {errors.email?.type === "exists" && (
+          <form
+            className="space-y-4 sm:space-y-7"
+            onSubmit={handleSubmit(handleRegister)}
+            noValidate
+          >
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Name*</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Ali"
+                autoComplete="name"
+                id="name"
+                aria-invalid={!!errors.name}
+                {...register("name")}
+              />
+              <ErrorMessage message={errors.name?.message} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email">Email*</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="ali@example.com"
+                autoComplete="email"
+                id="email"
+                aria-invalid={!!errors.email}
+                {...register("email")}
+              />
+              <ErrorMessage message={errors.email?.message}>
+                {errors.email?.type === "exists" && (
+                  <>
+                    {" "}
+                    <Link
+                      href="/login"
+                      className="underline font-semibold text-primary-600"
+                    >
+                      Sign in instead
+                    </Link>
+                  </>
+                )}
+              </ErrorMessage>
+            </div>
+
+            <div className="flex bg-light flex-col gap-2">
+              <label htmlFor="password">Password*</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="form-control pe-12"
+                  placeholder="create a strong password"
+                  autoComplete="new-password"
+                  id="password"
+                  aria-invalid={!!errors.password}
+                  {...register("password", { onChange: handlePasswordChange })}
+                />
+                <EyeToggle
+                  visible={showPassword}
+                  onToggle={() => setShowPassword((visible) => !visible)}
+                />
+              </div>
+
+              <div className="password-requirements">
+                <div className="flex items-center gap-2">
+                  <div className="bar grow h-1 bg-gray-200 rounded-md overflow-hidden">
+                    <div
+                      className={`progress h-full transition-all duration-300 ${strength.color}`}
+                      style={{ width: `${strength.percent}%` }}
+                    ></div>
+                  </div>
+                  <span>{strength.label}</span>
+                </div>
+              </div>
+
+              <ErrorMessage message={errors.password?.message} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="rePassword">Confirm Password*</label>
+              <div className="relative">
+                <input
+                  type={showRePassword ? "text" : "password"}
+                  className="form-control pe-12"
+                  placeholder="confirm your password"
+                  autoComplete="new-password"
+                  id="rePassword"
+                  aria-invalid={!!errors.rePassword}
+                  {...register("rePassword")}
+                />
+                <EyeToggle
+                  visible={showRePassword}
+                  onToggle={() => setShowRePassword((visible) => !visible)}
+                />
+              </div>
+              <ErrorMessage message={errors.rePassword?.message} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="phone">Phone Number*</label>
+              <input
+                type="tel"
+                className="form-control"
+                placeholder="01012345678"
+                autoComplete="tel"
+                id="phone"
+                aria-invalid={!!errors.phone}
+                {...register("phone")}
+              />
+              <ErrorMessage message={errors.phone?.message} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="size-4 mt-1 shrink-0 accent-primary-600"
+                  aria-invalid={!!errors.terms}
+                  {...register("terms")}
+                />
+                <label htmlFor="terms" className="ms-2 text-sm sm:text-base">
+                  I agree to the{" "}
+                  <Link href="/terms-of-service" className="text-primary-600">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/privacy-policy" className="text-primary-600">
+                    Privacy Policy
+                  </Link>{" "}
+                  *
+                </label>
+              </div>
+              <ErrorMessage message={errors.terms?.message} />
+            </div>
+
+            <ErrorMessage message={errors.root?.serverError?.message} />
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn flex gap-2 justify-center bg-primary-600 text-white hover:bg-primary-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 w-full"
+            >
+              {isSubmitting ? (
                 <>
-                  {" "}
-                  <Link
-                    href="/login"
-                    className="underline font-semibold text-primary-600"
+                  <svg
+                    className="animate-spin size-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
                   >
-                    Sign in instead
-                  </Link>
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <IconUserPlus stroke={2} />
+                  <span>Create My Account</span>
                 </>
               )}
-            </ErrorMessage>
-          </div>
+            </button>
+          </form>
 
-          <div className="flex bg-light flex-col gap-2">
-            <label htmlFor="password">Password*</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="form-control pe-12"
-                placeholder="create a strong password"
-                autoComplete="new-password"
-                id="password"
-                aria-invalid={!!errors.password}
-                {...register("password", { onChange: handlePasswordChange })}
-              />
-              <EyeToggle
-                visible={showPassword}
-                onToggle={() => setShowPassword((visible) => !visible)}
-              />
-            </div>
-
-            <div className="password-requirements">
-              <div className="flex items-center gap-2">
-                <div className="bar grow h-1 bg-gray-200 rounded-md overflow-hidden">
-                  <div
-                    className={`progress h-full transition-all duration-300 ${strength.color}`}
-                    style={{ width: `${strength.percent}%` }}
-                  ></div>
-                </div>
-                <span>{strength.label}</span>
-              </div>
-            </div>
-
-            <ErrorMessage message={errors.password?.message} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label htmlFor="rePassword">Confirm Password*</label>
-            <div className="relative">
-              <input
-                type={showRePassword ? "text" : "password"}
-                className="form-control pe-12"
-                placeholder="confirm your password"
-                autoComplete="new-password"
-                id="rePassword"
-                aria-invalid={!!errors.rePassword}
-                {...register("rePassword")}
-              />
-              <EyeToggle
-                visible={showRePassword}
-                onToggle={() => setShowRePassword((visible) => !visible)}
-              />
-            </div>
-            <ErrorMessage message={errors.rePassword?.message} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label htmlFor="phone">Phone Number*</label>
-            <input
-              type="tel"
-              className="form-control"
-              placeholder="01012345678"
-              autoComplete="tel"
-              id="phone"
-              aria-invalid={!!errors.phone}
-              {...register("phone")}
-            />
-            <ErrorMessage message={errors.phone?.message} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex items-start gap-2">
-              <input
-                type="checkbox"
-                id="terms"
-                className="size-4 mt-1 shrink-0 accent-primary-600"
-                aria-invalid={!!errors.terms}
-                {...register("terms")}
-              />
-              <label htmlFor="terms" className="ms-2 text-sm sm:text-base">
-                I agree to the{" "}
-                <Link href="/terms-of-service" className="text-primary-600">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy-policy" className="text-primary-600">
-                  Privacy Policy
-                </Link>{" "}
-                *
-              </label>
-            </div>
-            <ErrorMessage message={errors.terms?.message} />
-          </div>
-
-          <ErrorMessage message={errors.root?.serverError?.message} />
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn flex gap-2 justify-center bg-primary-600 text-white hover:bg-primary-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 w-full"
-          >
-            {isSubmitting ? (
-              <>
-                <svg
-                  className="animate-spin size-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  />
-                </svg>
-                <span>Creating account...</span>
-              </>
-            ) : (
-              <>
-                <IconUserPlus stroke={2} />
-                <span>Create My Account</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        <p className="border-t pt-6 sm:pt-10 border-gray-300/30 mt-6 mb-2 text-center">
-          Already have an account?{" "}
-          <Link href="/login" className="text-primary-600">
-            Sign In
-          </Link>
-        </p>
-      </div>
+          <p className="border-t pt-6 sm:pt-10 border-gray-300/30 mt-6 mb-2 text-center">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary-600">
+              Sign In
+            </Link>
+          </p>
+        </div>
+      </Reveal>
     </>
   );
 }

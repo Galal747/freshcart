@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { IconEye, IconEyeOff, IconLock } from "@tabler/icons-react";
 import { changePassword } from "../server/account.action";
+import Reveal from "@/components/Animations/Reveal";
 import {
   passwordSchema,
   type PasswordValues,
@@ -43,7 +44,7 @@ function PasswordField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`h-14 w-full rounded-xl border bg-white px-4 pe-12 outline-none transition-colors placeholder:text-gray-400 focus:border-primary-600 ${
+          className={`h-12 w-full rounded-xl border bg-white px-4 pe-12 sm:h-14 outline-none transition-colors placeholder:text-gray-400 focus:border-primary-600 ${
             error ? "border-red-400" : "border-gray-200"
           }`}
         />
@@ -100,8 +101,9 @@ export default function PasswordForm() {
   };
 
   return (
+    <Reveal delay={0.08}>
     <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-      <form onSubmit={handleSubmit} className="space-y-5 p-6 sm:p-9">
+      <form onSubmit={handleSubmit} className="space-y-4 p-5 sm:space-y-5 sm:p-9">
         <div className="flex items-center gap-4">
           <span className="flex size-14 items-center justify-center rounded-xl bg-orange-100 text-orange-500">
             <IconLock size={26} />
@@ -138,12 +140,13 @@ export default function PasswordForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="flex cursor-pointer items-center gap-2 rounded-xl bg-orange-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-orange-600/25 transition-all hover:bg-orange-700 active:scale-[0.97] disabled:opacity-60"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-orange-600 sm:w-auto px-6 py-3.5 font-semibold text-white shadow-lg shadow-orange-600/25 transition-all hover:bg-orange-700 active:scale-[0.97] disabled:opacity-60"
         >
           <IconLock size={18} />
           {isPending ? "Updating..." : "Change Password"}
         </button>
       </form>
     </section>
+    </Reveal>
   );
 }

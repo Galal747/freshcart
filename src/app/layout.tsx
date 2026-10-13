@@ -12,6 +12,16 @@ import {
   CartValuesTypes,
 } from "@/features/cart/slices/cart.slice";
 
+import miniLogo from "@/assets/images/mini-logo.png";
+
+export const metadata: Metadata = {
+  title: "FreshCart",
+  description: "Your one-stop shop for fresh products",
+  icons: {
+    icon: miniLogo.src, 
+  },
+};
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,7 +32,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const authStates = await verifyToken();
 
   let cartValues: CartValuesTypes = cartInitialValues;
@@ -49,7 +63,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col overflow-x-clip">
         <Providers
           preloadedState={{ authReducer: authStates, cartReducer: cartValues }}
         >

@@ -1,6 +1,6 @@
 import { getAllCategories } from "@/features/categories/services/getAllCategories";
 import CategoriesSlider from "./CategoriesSlider"; 
-
+import Reveal from "@/components/Animations/Reveal";
 
 const skeletonVisibility = [
   "",
@@ -36,7 +36,6 @@ export function CategoriesSkeleton() {
   );
 }
 
-
 export default async function HomeCategories() {
   let categories: Awaited<ReturnType<typeof getAllCategories>>["data"] = [];
 
@@ -49,13 +48,15 @@ export default async function HomeCategories() {
     return (
       <section className="py-10 sm:py-12">
         <div className="container mx-auto">
-          <div
-            role="alert"
-            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700"
-          >
-            We couldn&apos;t load the categories right now. Please try again
-            later.
-          </div>
+          <Reveal>
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700"
+            >
+              We couldn&apos;t load the categories right now. Please try again
+              later.
+            </div>
+          </Reveal>
         </div>
       </section>
     );
